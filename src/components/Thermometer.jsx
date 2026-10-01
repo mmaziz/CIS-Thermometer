@@ -19,6 +19,16 @@ const ICON_MAP = {
 
 export const Thermometer = ({ raisedAmount, targetGoal, milestones }) => {
   const [animatedHeight, setAnimatedHeight] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const percentage = Math.min(100, Math.max(0, (raisedAmount / targetGoal) * 100));
 
@@ -34,7 +44,8 @@ export const Thermometer = ({ raisedAmount, targetGoal, milestones }) => {
     return () => clearTimeout(timer);
   }, [percentage]);
 
-  const tubeHeight = 480; // height of center-glass-tube in pixels
+  const tubeHeight = isMobile ? 380 : 480;
+  const markerOffset = isMobile ? 14 : 20;
 
   return (
     <div className="thermo-center-card">
@@ -43,19 +54,19 @@ export const Thermometer = ({ raisedAmount, targetGoal, milestones }) => {
       <div style={{ 
         display: 'inline-flex', 
         alignItems: 'center', 
-        gap: '0.5rem', 
-        padding: '0.45rem 1.25rem', 
+        gap: '0.4rem', 
+        padding: '0.4rem 1.15rem', 
         borderRadius: '9999px', 
         background: 'rgba(6, 182, 212, 0.12)', 
         color: '#38bdf8', 
         border: '1px solid rgba(6, 182, 212, 0.3)', 
-        fontSize: '0.8rem', 
+        fontSize: isMobile ? '0.72rem' : '0.8rem', 
         fontWeight: 800, 
         textTransform: 'uppercase', 
-        letterSpacing: '0.06em', 
-        marginBottom: '2rem' 
+        letterSpacing: '0.05em', 
+        marginBottom: isMobile ? '1.25rem' : '2rem' 
       }}>
-        <Flame style={{ width: 15, height: 15, color: '#38bdf8' }} />
+        <Flame style={{ width: 14, height: 14, color: '#38bdf8' }} />
         <span>Live Progress Thermometer</span>
       </div>
 
@@ -63,7 +74,7 @@ export const Thermometer = ({ raisedAmount, targetGoal, milestones }) => {
       <div className="center-thermo-wrapper" style={{ height: `${tubeHeight}px` }}>
         
         {/* Center Glass Tube */}
-        <div className="center-glass-tube" style={{ height: `${tubeHeight}px` }}>
+        <div className="center-glass-tube">
           
           {/* Tick lines inside glass tube */}
           {milestones.map((m) => {
@@ -75,8 +86,8 @@ export const Thermometer = ({ raisedAmount, targetGoal, milestones }) => {
                   position: 'absolute',
                   left: 0,
                   right: 0,
-                  bottom: `${markRatio * 100}%`,
-                  borderBottom: '2px dashed rgba(255, 255, 255, 0.35)',
+                  bottom: m.amount === targetGoal ? 'calc(100% - 2px)' : `${markRatio * 100}%`,
+                  borderBottom: m.amount === targetGoal ? 'none' : '2px dashed rgba(255, 255, 255, 0.35)',
                   zIndex: 10
                 }}
               ></div>
@@ -96,7 +107,7 @@ export const Thermometer = ({ raisedAmount, targetGoal, milestones }) => {
           <div className="center-bulb-label">{percentage.toFixed(0)}% Funded</div>
         </div>
 
-        {/* ATTACHED DOLLAR AMOUNT BADGES PRECISELY ALIGNED TO TUBE HEIGHT */}
+        {/* ATTACHED DOLLAR AMOUNT BADGES */}
         {milestones.map((m, index) => {
           const markRatio = m.amount / targetGoal; // 0.25, 0.5, 0.75, 1.0
           const isUnlocked = raisedAmount >= m.amount;
@@ -106,11 +117,8 @@ export const Thermometer = ({ raisedAmount, targetGoal, milestones }) => {
 
           const isLeft = index % 2 === 1;
 
-          // Tube is tubeHeight (480px).
-          // Marker badge is ~40px high, line is centered vertically at ~20px offset.
-          // Bottom pixel position = (tubeHeight * markRatio) - 20px.
-          // For $8,000 (100%): 480px - 20px = 460px -> line points EXACTLY to apex at 480px!
-          const bottomPx = (tubeHeight * markRatio) - 20;
+          // Calculate exact pixel bottom position
+          const bottomPx = (tubeHeight * markRatio) - markerOffset;
 
           return (
             <div 
@@ -129,15 +137,15 @@ export const Thermometer = ({ raisedAmount, targetGoal, milestones }) => {
                       background: isGoal ? 'rgba(113, 63, 18, 0.5)' : undefined
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <IconComponent style={{ width: 18, height: 18, color: isGoal ? '#fde047' : isUnlocked ? '#34d399' : isCurrentTarget ? '#fbbf24' : '#94a3b8' }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.3rem' : '0.5rem' }}>
+                      <IconComponent style={{ width: isMobile ? 14 : 18, height: isMobile ? 14 : 18, color: isGoal ? '#fde047' : isUnlocked ? '#34d399' : isCurrentTarget ? '#fbbf24' : '#94a3b8' }} />
                       <div className="marker-amount" style={{ color: isGoal ? '#fef08a' : '#ffffff' }}>
-                        ${m.amount.toLocaleString()} {isGoal && <span style={{ fontSize: '0.75rem', color: '#fde047', fontWeight: 800, textTransform: 'uppercase', marginLeft: '0.2rem' }}>GOAL</span>}
+                        ${m.amount.toLocaleString()} {isGoal && <span style={{ fontSize: isMobile ? '0.65rem' : '0.75rem', color: '#fde047', fontWeight: 800, textTransform: 'uppercase', marginLeft: '0.15rem' }}>GOAL</span>}
                       </div>
                       {isUnlocked ? (
-                        <CheckCircle2 style={{ width: 15, height: 15, color: '#34d399' }} />
+                        <CheckCircle2 style={{ width: isMobile ? 13 : 15, height: isMobile ? 13 : 15, color: '#34d399' }} />
                       ) : (
-                        <Lock style={{ width: 13, height: 13, color: '#64748b' }} />
+                        <Lock style={{ width: isMobile ? 11 : 13, height: isMobile ? 11 : 13, color: '#64748b' }} />
                       )}
                     </div>
                   </div>
@@ -155,16 +163,16 @@ export const Thermometer = ({ raisedAmount, targetGoal, milestones }) => {
                       background: isGoal ? 'rgba(113, 63, 18, 0.5)' : undefined
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.3rem' : '0.5rem' }}>
                       {isUnlocked ? (
-                        <CheckCircle2 style={{ width: 15, height: 15, color: '#34d399' }} />
+                        <CheckCircle2 style={{ width: isMobile ? 13 : 15, height: isMobile ? 13 : 15, color: '#34d399' }} />
                       ) : (
-                        <Lock style={{ width: 13, height: 13, color: '#64748b' }} />
+                        <Lock style={{ width: isMobile ? 11 : 13, height: isMobile ? 11 : 13, color: '#64748b' }} />
                       )}
                       <div className="marker-amount" style={{ color: isGoal ? '#fef08a' : '#ffffff' }}>
-                        ${m.amount.toLocaleString()} {isGoal && <span style={{ fontSize: '0.75rem', color: '#fde047', fontWeight: 800, textTransform: 'uppercase', marginLeft: '0.2rem' }}>GOAL</span>}
+                        ${m.amount.toLocaleString()} {isGoal && <span style={{ fontSize: isMobile ? '0.65rem' : '0.75rem', color: '#fde047', fontWeight: 800, textTransform: 'uppercase', marginLeft: '0.15rem' }}>GOAL</span>}
                       </div>
-                      <IconComponent style={{ width: 18, height: 18, color: isGoal ? '#fde047' : isUnlocked ? '#34d399' : isCurrentTarget ? '#fbbf24' : '#94a3b8' }} />
+                      <IconComponent style={{ width: isMobile ? 14 : 18, height: isMobile ? 14 : 18, color: isGoal ? '#fde047' : isUnlocked ? '#34d399' : isCurrentTarget ? '#fbbf24' : '#94a3b8' }} />
                     </div>
                   </div>
                 </>
