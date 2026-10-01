@@ -22,7 +22,7 @@ export const DonateModal = ({ isOpen, onClose, paymentMethods, paymentNote }) =>
 
   return (
     <div className="modal-backdrop">
-      <div className="modal-dialog" style={{ maxWidth: '580px' }}>
+      <div className="modal-dialog" style={{ maxWidth: '560px' }}>
         
         {/* Close Button */}
         <button onClick={onClose} className="modal-close-btn">
@@ -44,12 +44,11 @@ export const DonateModal = ({ isOpen, onClose, paymentMethods, paymentNote }) =>
           </div>
         </div>
 
-        {/* Payment Methods List matching screenshot */}
+        {/* Payment Methods List */}
         <div>
           {paymentMethods.map((method) => {
             const IconComp = ICON_MAP[method.icon] || Zap;
             const isCopied = copiedId === method.id;
-            const isSecCopied = copiedId === `${method.id}-sec`;
 
             return (
               <div key={method.id} className="payment-method-row">
@@ -64,42 +63,15 @@ export const DonateModal = ({ isOpen, onClose, paymentMethods, paymentNote }) =>
                     <div style={{ fontFamily: 'monospace', fontSize: '0.85rem', color: '#38bdf8', fontWeight: 700, marginTop: '0.25rem' }}>
                       {method.handle}
                     </div>
-
-                    {method.secondaryHandle && (
-                      <div style={{ fontFamily: 'monospace', fontSize: '0.82rem', color: '#a7f3d0', fontWeight: 600, marginTop: '0.15rem' }}>
-                        Zelle / Email: {method.secondaryHandle}
-                      </div>
-                    )}
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', alignSelf: 'center' }}>
+                <div style={{ display: 'flex', flexContent: 'center', alignSelf: 'center' }}>
                   {method.url ? (
-                    <>
-                      <a href={method.url} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ padding: '0.45rem 0.85rem', fontSize: '0.78rem' }}>
-                        <span>Open Paypal.me</span>
-                        <ExternalLink style={{ width: 12, height: 12 }} />
-                      </a>
-                      {method.secondaryHandle && (
-                        <button
-                          onClick={() => handleCopy(`${method.id}-sec`, method.secondaryHandle)}
-                          className="btn-secondary"
-                          style={{ padding: '0.45rem 0.85rem', fontSize: '0.75rem' }}
-                        >
-                          {isSecCopied ? (
-                            <>
-                              <Check style={{ width: 12, height: 12, color: '#34d399' }} />
-                              <span>Copied Email!</span>
-                            </>
-                          ) : (
-                            <>
-                              <Copy style={{ width: 12, height: 12 }} />
-                              <span>Copy Email</span>
-                            </>
-                          )}
-                        </button>
-                      )}
-                    </>
+                    <a href={method.url} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}>
+                      <span>Open Paypal.me</span>
+                      <ExternalLink style={{ width: 12, height: 12 }} />
+                    </a>
                   ) : method.id === 'venmo' ? (
                     <button
                       onClick={() => handleCopy(method.id, method.handle)}

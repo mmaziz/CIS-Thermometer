@@ -8,7 +8,7 @@ export const fundraisingConfig = {
   // --------------------------------------------------------------------------
   // 1. FUNDRAISING CORE NUMBERS
   // --------------------------------------------------------------------------
-  /** Current total dollars raised so far (fallback default if no localStorage set) */
+  /** Current total dollars raised so far (fallback default if no cloud set) */
   raisedAmount: 0,
 
   /** The target goal to cover the camp deficit */
@@ -102,7 +102,7 @@ export const fundraisingConfig = {
   ],
 
   // --------------------------------------------------------------------------
-  // 5. DIRECT PAYMENT / DONATION METHODS (MATCHING USER SCREENSHOT EXACTLY)
+  // 5. DIRECT PAYMENT / DONATION METHODS
   // --------------------------------------------------------------------------
   paymentNote: "Please make sure to leave your child's name in the comment",
   paymentMethods: [
@@ -124,11 +124,10 @@ export const fundraisingConfig = {
     },
     {
       id: 'paypal',
-      name: 'PayPal / Email Payment',
+      name: 'PayPal Payment',
       handle: 'paypal.me/ChristinSports/',
       url: 'https://paypal.me/ChristinSports/',
-      secondaryHandle: 'cisstantonios@gmail.com',
-      note: 'Paypal payments available at paypal.me/ChristinSports/ or cisstantonios@gmail.com',
+      note: 'Paypal payments available at paypal.me/ChristinSports/',
       color: '#003087',
       icon: 'CreditCard'
     }
