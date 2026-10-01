@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { fundraisingConfig } from './config/fundraising';
 import { Header } from './components/Header';
 import { Thermometer } from './components/Thermometer';
@@ -6,26 +6,48 @@ import { DonateModal } from './components/DonateModal';
 import { CodeHelperModal } from './components/CodeHelperModal';
 import { HeartHandshake, Lock, Sliders, RotateCcw } from 'lucide-react';
 
+const STORAGE_KEY = 'cis_raised_amount';
+
 export function App() {
   const [isDonateOpen, setIsDonateOpen] = useState(false);
   const [isCodeHelperOpen, setIsCodeHelperOpen] = useState(false);
-  
-  const [currentRaised, setCurrentRaised] = useState(fundraisingConfig.raisedAmount);
+
+  // Load saved raised amount from localStorage on load
+  const [currentRaised, setCurrentRaised] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved !== null) {
+      const parsed = Number(saved);
+      if (!isNaN(parsed)) return parsed;
+    }
+    return fundraisingConfig.raisedAmount;
+  });
+
   const isCustomPreview = currentRaised !== fundraisingConfig.raisedAmount;
+
+  // Save new raised amount to state and localStorage
+  const handleSaveAmount = (newAmount) => {
+    setCurrentRaised(newAmount);
+    localStorage.setItem(STORAGE_KEY, newAmount.toString());
+  };
+
+  const handleResetAmount = () => {
+    setCurrentRaised(0);
+    localStorage.removeItem(STORAGE_KEY);
+  };
 
   return (
     <div className="centered-app">
       
       {/* Live Preview Active Banner */}
       {isCustomPreview && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: 'rgba(245, 158, 11, 0.9)', color: '#0f172a', padding: '0.4rem 1rem', fontSize: '0.78rem', fontWeight: 800, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: 'rgba(245, 158, 11, 0.9)', color: '#0f172a', padding: '0.4rem 1rem', fontSize: '0.78rem', fontWeight: 800, textAlign: 'center', display: 'flex', itemsAlign: 'center', justifyContent: 'center', gap: '0.5rem' }}>
           <Sliders style={{ width: 14, height: 14 }} />
-          <span>Interactive Amount Active: Showing <strong>${currentRaised.toLocaleString()}</strong> raised</span>
+          <span>Raised Amount Saved: <strong>${currentRaised.toLocaleString()}</strong></span>
           <button 
-            onClick={() => setCurrentRaised(fundraisingConfig.raisedAmount)}
+            onClick={handleResetAmount}
             style={{ background: '#0f172a', color: '#ffffff', border: 'none', padding: '0.2rem 0.6rem', borderRadius: '0.3rem', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.25rem', marginLeft: '0.5rem' }}
           >
-            <RotateCcw style={{ width: 12, height: 12 }} /> Reset to Code (${fundraisingConfig.raisedAmount.toLocaleString()})
+            <RotateCcw style={{ width: 12, height: 12 }} /> Reset to $0
           </button>
         </div>
       )}
@@ -70,6 +92,7 @@ export function App() {
         isOpen={isDonateOpen}
         onClose={() => setIsDonateOpen(false)}
         paymentMethods={fundraisingConfig.paymentMethods}
+        paymentNote={fundraisingConfig.paymentNote}
       />
 
       {/* Developer Code Helper Modal */}
@@ -78,7 +101,7 @@ export function App() {
         onClose={() => setIsCodeHelperOpen(false)}
         currentRaised={currentRaised}
         targetGoal={fundraisingConfig.targetGoal}
-        onSaveAmount={(newAmount) => setCurrentRaised(newAmount)}
+        onSaveAmount={handleSaveAmount}
       />
 
     </div>

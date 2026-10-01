@@ -2,21 +2,13 @@
  * ============================================================================
  * CIS AMBASSADORS CAMP - FUNDRAISING CONFIGURATION FILE
  * ============================================================================
- * EDIT THIS FILE TO UPDATE THE THERMOMETER & CAMPAIGN DETAILS DIRECTLY FROM CODE.
- *
- * How to update progress:
- * 1. Change `raisedAmount` below to your latest dollar total (e.g. 500, 1200, 4000).
- * 2. Save this file.
- * 3. The thermometer gauge, percentage, stats grid, and unlocked level badges
- *    will automatically recalculate and update on your website!
- * ============================================================================
  */
 
 export const fundraisingConfig = {
   // --------------------------------------------------------------------------
-  // 1. FUNDRAISING CORE NUMBERS (EDIT THESE)
+  // 1. FUNDRAISING CORE NUMBERS
   // --------------------------------------------------------------------------
-  /** Current total dollars raised so far. Starting at 0 as requested! */
+  /** Current total dollars raised so far (fallback default if no localStorage set) */
   raisedAmount: 0,
 
   /** The target goal to cover the camp deficit */
@@ -110,54 +102,37 @@ export const fundraisingConfig = {
   ],
 
   // --------------------------------------------------------------------------
-  // 5. DIRECT PAYMENT / DONATION METHODS
+  // 5. DIRECT PAYMENT / DONATION METHODS (MATCHING USER SCREENSHOT EXACTLY)
   // --------------------------------------------------------------------------
+  paymentNote: "Please make sure to leave your child's name in the comment",
   paymentMethods: [
     {
-      id: 'zelle',
-      name: 'Zelle',
-      handle: 'cis.ambassadors.camp@gmail.com',
-      note: 'Include note: "CIS Camp Deficit - [Your Name]"',
-      color: '#7414ca',
-      icon: 'Zap'
+      id: 'cash',
+      name: 'Cash Payment',
+      handle: 'Given to Maria Ehab or Joseph Tadros',
+      note: 'CASH can be given directly to Maria Ehab or Joseph Tadros',
+      color: '#10b981',
+      icon: 'DollarSign'
     },
     {
       id: 'venmo',
-      name: 'Venmo',
-      handle: '@CIS-Ambassadors-Camp',
-      note: 'Verification digits: 4892',
+      name: 'Venmo Payment',
+      handle: '@CIS-stantonios',
+      note: 'Venmo payment available (@CIS-stantonios)',
       color: '#008cff',
       icon: 'Send'
     },
     {
-      id: 'cashapp',
-      name: 'Cash App',
-      handle: '$CISAmbassadors',
-      note: 'Fast direct support with $Cashtag',
-      color: '#00d632',
-      icon: 'DollarSign'
-    },
-    {
       id: 'paypal',
-      name: 'PayPal / Card',
-      handle: 'paypal.me/cisambassadors',
-      url: 'https://paypal.me/cisambassadors',
-      note: 'Accepts Credit/Debit card payments',
+      name: 'PayPal / Email Payment',
+      handle: 'paypal.me/ChristinSports/',
+      url: 'https://paypal.me/ChristinSports/',
+      secondaryHandle: 'cisstantonios@gmail.com',
+      note: 'Paypal payments available at paypal.me/ChristinSports/ or cisstantonios@gmail.com',
       color: '#003087',
       icon: 'CreditCard'
-    },
-    {
-      id: 'check',
-      name: 'Check / Bank Wire',
-      handle: 'CIS Ambassadors Foundation',
-      note: 'Mail to: 1200 Ambassador Way, Suite 400',
-      color: '#64748b',
-      icon: 'Building'
     }
   ],
 
-  // --------------------------------------------------------------------------
-  // 6. RECENT DONORS / SPONSORS
-  // --------------------------------------------------------------------------
   recentDonors: []
 };
